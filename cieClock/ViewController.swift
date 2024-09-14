@@ -112,10 +112,12 @@ class CieClockViewController: UIViewController {
             let calendar = Calendar.current
             let components = calendar.dateComponents([.hour, .minute, .second], from: Date())
             
-            let cHour = components.hour ?? 0
+        var cHour = components.hour ?? 0
             let cMin = components.minute ?? 0
             let cSec = components.second ?? 0
 
+            if cHour > 12 {cHour=cHour-12}
+        
             let chrome = 100
             
             var chouri = 360.0 - (Double(cHour - 3) * 30.0)
@@ -158,10 +160,7 @@ class CieClockViewController: UIViewController {
             let mRGB = CieClockViewController.cieXYZtoSRGB(X: xm, Y: ym, Z: zm)
             let sRGB = CieClockViewController.cieXYZtoSRGB(X: xs, Y: ys, Z: zs)
             
-            debugPrint("mLab: ",cMin,":",Lm,",",am,",",bm)
-            debugPrint("mRGB: ", mRGB)
-            debugPrint("sLab: ",cSec,":",Ls,",",asVal,",",bsVal)
-            debugPrint("sRGB: ", sRGB)
+
         
             let hourCirclePaint = UIColor(red: CGFloat(hRGB[0])/255, green: CGFloat(hRGB[1])/255, blue: CGFloat(hRGB[2])/255, alpha: 1.0)
             let minCirclePaint = UIColor(red: CGFloat(mRGB[0])/255, green: CGFloat(mRGB[1])/255, blue: CGFloat(mRGB[2])/255, alpha: 1.0)
@@ -371,8 +370,56 @@ class SecondPageViewController: UIViewController {
         var brickView: TimeBrickView!
         var timer: Timer?
     
+    // Labels for hour, minute, and second
+    var hourLabel: UILabel!
+    var minuteLabel: UILabel!
+    var secondLabel: UILabel!
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        hourLabel = UILabel()
+        minuteLabel = UILabel()
+        secondLabel = UILabel()
+        
+
+        // Customize labels (font, color, alignment, etc.)
+        hourLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        hourLabel.textColor = .black
+        hourLabel.textAlignment = .center
+
+
+        minuteLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        minuteLabel.textColor = .black
+        minuteLabel.textAlignment = .center
+
+        secondLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        secondLabel.textColor = .black
+        secondLabel.textAlignment = .center
+        
+        
+        
+        
+
+        // Add labels to the view hierarchy
+        let rectHeight: CGFloat = 100
+        let hourRect = UIView(frame: CGRect(x: 50, y: 210, width: 300, height: rectHeight))
+        let minuteRect = UIView(frame: CGRect(x: 50, y: 330, width: 300, height: rectHeight))
+        let secondRect = UIView(frame: CGRect(x: 50, y: 450, width: 300, height: rectHeight))
+
+        hourRect.addSubview(hourLabel)
+        minuteRect.addSubview(minuteLabel)
+        secondRect.addSubview(secondLabel)
+
+        // Position the labels within the rectangles
+        hourLabel.frame = hourRect.bounds
+        minuteLabel.frame = minuteRect.bounds
+        secondLabel.frame = secondRect.bounds
+
+        view.addSubview(hourRect)
+        view.addSubview(minuteRect)
+        view.addSubview(secondRect)
         
         updateClockColors()
         
@@ -380,7 +427,8 @@ class SecondPageViewController: UIViewController {
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateClockColors), userInfo: nil, repeats: true)
     }
         
-        
+
+
         
     @objc func updateClockColors() {
         // Define rectangle sizes
@@ -389,10 +437,12 @@ class SecondPageViewController: UIViewController {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.hour, .minute, .second], from: Date())
         
-        let cHour = components.hour ?? 0
+        var cHour = components.hour ?? 0
         let cMin = components.minute ?? 0
         let cSec = components.second ?? 0
 
+        if cHour > 12 {cHour=cHour-12}
+        
         let chrome = 100
         
         var chouri = 360.0 - (Double(cHour - 3) * 30.0)
@@ -435,24 +485,116 @@ class SecondPageViewController: UIViewController {
         let mRGB = CieClockViewController.cieXYZtoSRGB(X: xm, Y: ym, Z: zm)
         let sRGB = CieClockViewController.cieXYZtoSRGB(X: xs, Y: ys, Z: zs)
         
+        let labH = SecondPageViewController.sRGBtoLab(r: hRGB[0], g: hRGB[1], b: hRGB[2])
+        let labM = SecondPageViewController.sRGBtoLab(r: mRGB[0], g: mRGB[1], b: mRGB[2])
+        let labS = SecondPageViewController.sRGBtoLab(r: sRGB[0], g: sRGB[1], b: sRGB[2])
+        
+        let sHL = round(labH[0]*100)/100
+        let sHa = round(labH[1]*100)/100
+        let sHb = round(labH[2]*100)/100
+
+        let smL = round(labM[0]*100)/100
+        let sma = round(labM[1]*100)/100
+        let smb = round(labM[2]*100)/100
+        
+        let ssL = round(labS[0]*100)/100
+        let ssa = round(labS[1]*100)/100
+        let ssb = round(labS[2]*100)/100
         
         
+        
+        // Update label texts with time and color values
+        hourLabel.numberOfLines = 0 // Allow multiple lines
+        hourLabel.lineBreakMode = .byWordWrapping // Handle line breaks by wrapping words
+        minuteLabel.numberOfLines = 0 // Allow multiple lines
+        minuteLabel.lineBreakMode = .byWordWrapping // Handle line breaks by wrapping words
+        secondLabel.numberOfLines = 0 // Allow multiple lines
+        secondLabel.lineBreakMode = .byWordWrapping // Handle line breaks by wrapping words
+
+        hourLabel.text = "Hour: \(cHour) \nRGB: \(hRGB)\nLab: [\(sHL), \(sHa), \(sHb)]"
+        minuteLabel.text = "Minute: \(cMin) \n RGB: \(mRGB)\nLab: [\(smL), \(sma), \(smb)]"
+        secondLabel.text = "Second: \(cSec) RGB: \(sRGB)\nLab: [\(ssL), \(ssa), \(ssb)]"
+        
+        
+        //debugPrint("mLab: ",cMin,":",Lm,",",am,",",bm)
+        //debugPrint("mRGB: ", mRGB)
+        //debugPrint("sLab: ",cSec,":",Ls,",",asVal,",",bsVal)
+        //debugPrint("sRGB: ", sRGB)
         // Hour Rectangle
-        let hourRect = UIView(frame: CGRect(x: 50, y: 100, width: 300, height: rectHeight))
+    
+
+        // Add these labels to the corresponding rectangles (hourRect, minRect, secRect)
+
+        
+        let hourRect = UIView(frame: CGRect(x: 50, y: 210, width: 300, height: rectHeight))
+        hourRect.addSubview(hourLabel)
         hourRect.backgroundColor = UIColor(red: CGFloat(hRGB[0])/255, green: CGFloat(hRGB[1])/255, blue: CGFloat(hRGB[2])/255, alpha: 1.0) // Replace with dynamic hour color
         view.addSubview(hourRect)
         
         // Minute Rectangle
-        let minuteRect = UIView(frame: CGRect(x: 50, y: 220, width: 300, height: rectHeight))
+        let minuteRect = UIView(frame: CGRect(x: 50, y: 330, width: 300, height: rectHeight))
+        minuteRect.addSubview(minuteLabel)
         minuteRect.backgroundColor = UIColor(red: CGFloat(mRGB[0])/255, green: CGFloat(mRGB[1])/255, blue: CGFloat(mRGB[2])/255, alpha: 1.0) // Replace with dynamic hour color
         view.addSubview(minuteRect)
         
         // Second Rectangle
-        let secondRect = UIView(frame: CGRect(x: 50, y: 340, width: 300, height: rectHeight))
+        let secondRect = UIView(frame: CGRect(x: 50, y: 450, width: 300, height: rectHeight))
+        secondRect.addSubview(secondLabel)
         secondRect.backgroundColor = UIColor(red: CGFloat(sRGB[0])/255, green: CGFloat(sRGB[1])/255, blue: CGFloat(sRGB[2])/255, alpha: 1.0) // Replace with dynamic hour color
         view.addSubview(secondRect)
     }
     
+    
+    
+    static func sRGBtoLab(r: Int, g: Int, b: Int) -> [Double] {
+        let xyz = sRGBtoXYZ(r: r, g: g, b: b)
+        return XYZtoLab(X: xyz[0], Y: xyz[1], Z: xyz[2])
+    }
+
+    static func sRGBtoXYZ(r: Int, g: Int, b: Int) -> [Double] {
+        // Normalize the RGB values to the range [0, 1]
+        var R = Double(r) / 255.0
+        var G = Double(g) / 255.0
+        var B = Double(b) / 255.0
+
+        // Apply gamma correction
+        R = gammaCorrection(channel: R)
+        G = gammaCorrection(channel: G)
+        B = gammaCorrection(channel: B)
+
+        // Convert to XYZ using the P3 RGB matrix
+        let X = R * 0.4865709 + G * 0.2656677 + B * 0.1982173 // P3 RGB
+        let Y = R * 0.2289746 + G * 0.6917385 + B * 0.0792869
+        let Z = R * 0.0000000 + G * 0.0451134 + B * 1.0439443
+
+        return [X, Y, Z]
+    }
+
+    static func gammaCorrection(channel: Double) -> Double {
+        return (channel > 0.04045) ? pow((channel + 0.055) / 1.055, 2.4) : (channel / 12.92)
+    }
+
+    static func XYZtoLab(X: Double, Y: Double, Z: Double) -> [Double] {
+        // Normalize for D65 white point
+        var X = X / 0.95047
+        var Y = Y / 1.00000
+        var Z = Z / 1.08883
+
+        X = labF(t: X)
+        Y = labF(t: Y)
+        Z = labF(t: Z)
+
+        let L = (116 * Y) - 16
+        let a = 500 * (X - Y)
+        let b = 200 * (Y - Z)
+
+        return [L, a, b]
+    }
+
+    static func labF(t: Double) -> Double {
+        return (t > pow(6.0 / 29.0, 3)) ? cbrt(t) : (t / (3 * pow(6.0 / 29.0, 2)) + 4.0 / 29.0)
+    }
+
     
     static func cieXYZtoSRGB(X: Double, Y: Double, Z: Double) -> [Int] {
         // Normalize XYZ values
