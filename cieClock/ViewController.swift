@@ -90,6 +90,34 @@ class TimeBrickView: UIView {
     }
 }
 
+class DOYView: UIView {
+    
+    var doyBrickColor: UIColor
+
+    
+    init(frame: CGRect, doyColor: UIColor) {
+        self.doyBrickColor = doyColor
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func draw(_ rect: CGRect) {
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+        
+        let brickHeight = rect.height
+        let width = rect.width
+        
+        // Draw hour brick
+        context.setFillColor(doyBrickColor.cgColor)
+        context.fill(CGRect(x: 0, y: 0, width: width, height: brickHeight))
+        
+
+    }
+}
+
 
 // In your ViewController, you can now pass your custom colors
 class CieClockViewController: UIViewController {
@@ -512,8 +540,8 @@ class SecondPageViewController: UIViewController {
         secondLabel.lineBreakMode = .byWordWrapping // Handle line breaks by wrapping words
 
         hourLabel.text = "Hour: \(cHour) \nRGB: \(hRGB)\nLab: [\(sHL), \(sHa), \(sHb)]"
-        minuteLabel.text = "Minute: \(cMin) \n RGB: \(mRGB)\nLab: [\(smL), \(sma), \(smb)]"
-        secondLabel.text = "Second: \(cSec) RGB: \(sRGB)\nLab: [\(ssL), \(ssa), \(ssb)]"
+        minuteLabel.text = "Minute: \(cMin) \nRGB: \(mRGB)\nLab: [\(smL), \(sma), \(smb)]"
+        secondLabel.text = "Second: \(cSec) \nRGB: \(sRGB)\nLab: [\(ssL), \(ssa), \(ssb)]"
         
         
         //debugPrint("mLab: ",cMin,":",Lm,",",am,",",bm)
@@ -778,6 +806,264 @@ class SecondPageViewController: UIViewController {
     
 }
 
+class DOYPageViewController: UIViewController {
+        var brickView: DOYView!
+        var timer: Timer?
+    
+    // Labels for hour, minute, and second
+    var doyLabel: UILabel!
+
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        doyLabel = UILabel()
+
+        
+
+        // Customize labels (font, color, alignment, etc.)
+        doyLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        doyLabel.textColor = .black
+        doyLabel.textAlignment = .center
+
+        
+        
+        
+        
+
+        // Add labels to the view hierarchy
+        let rectHeight: CGFloat = 400
+        let doyRect = UIView(frame: CGRect(x: 50, y: 210, width: 300, height: rectHeight))
+
+
+        doyRect.addSubview(doyLabel)
+
+        // Position the labels within the rectangles
+        doyLabel.frame = doyRect.bounds
+
+
+        view.addSubview(doyRect)
+
+        
+        updateClockColors()
+        
+        // Start a timer to refresh every second
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateClockColors), userInfo: nil, repeats: true)
+    }
+        
+
+
+        
+    @objc func updateClockColors() {
+        // Define rectangle sizes
+        let rectHeight: CGFloat = 400
+        
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.hour, .minute, .second], from: Date())
+        
+        var cHour = components.hour ?? 0
+        let cMin = components.minute ?? 0
+        let cSec = components.second ?? 0
+        
+        
+        let cDay = calendar.ordinality(of: .day, in: .year, for: Date()) ?? 1
+        let cDayi = (Double(cDay) / 365.0) * 360.0
+
+
+        
+        
+        let chrome = 100
+        
+        let degreeD = cDayi * .pi / 180.0
+        
+        let Ld = DOYPageViewController.getLd(cDayi)
+
+        
+        let ad = cos(degreeD) * Double(chrome)
+        let bd = sin(degreeD) * Double(chrome)
+
+        
+        let xd = lab2xyz("x", l: Double(Ld), a: ad, b: bd) * 0.01
+        let yd = lab2xyz("y", l: Double(Ld), a: ad, b: bd) * 0.01
+        let zd = lab2xyz("z", l: Double(Ld), a: ad, b: bd) * 0.01
+
+        let dRGB = CieClockViewController.cieXYZtoSRGB(X: xd, Y: yd, Z: zd)
+
+        
+        let labd = DOYPageViewController.sRGBtoLab(r: dRGB[0], g: dRGB[1], b: dRGB[2])
+
+        let sdL = round(labd[0]*100)/100
+        let sda = round(labd[1]*100)/100
+        let sdb = round(labd[2]*100)/100
+
+
+        // Update label texts with time and color values
+        doyLabel.numberOfLines = 0 // Allow multiple lines
+        doyLabel.lineBreakMode = .byWordWrapping // Handle line breaks by wrapping words
+
+        doyLabel.text = "Day of Year: \(cDay) \nRGB: \(dRGB)\nLab: [\(sdL), \(sda), \(sdb)]"
+
+
+        
+        let doyRect = UIView(frame: CGRect(x: 50, y: 210, width: 300, height: rectHeight))
+        doyRect.addSubview(doyLabel)
+        doyRect.backgroundColor = UIColor(red: CGFloat(dRGB[0])/255, green: CGFloat(dRGB[1])/255, blue: CGFloat(dRGB[2])/255, alpha: 1.0) // Replace with dynamic hour color
+        view.addSubview(doyRect)
+        
+
+    }
+    
+    
+    
+    static func sRGBtoLab(r: Int, g: Int, b: Int) -> [Double] {
+        let xyz = sRGBtoXYZ(r: r, g: g, b: b)
+        return XYZtoLab(X: xyz[0], Y: xyz[1], Z: xyz[2])
+    }
+
+    static func sRGBtoXYZ(r: Int, g: Int, b: Int) -> [Double] {
+        // Normalize the RGB values to the range [0, 1]
+        var R = Double(r) / 255.0
+        var G = Double(g) / 255.0
+        var B = Double(b) / 255.0
+
+        // Apply gamma correction
+        R = gammaCorrection(channel: R)
+        G = gammaCorrection(channel: G)
+        B = gammaCorrection(channel: B)
+
+        // Convert to XYZ using the P3 RGB matrix
+        let X = R * 0.4865709 + G * 0.2656677 + B * 0.1982173 // P3 RGB
+        let Y = R * 0.2289746 + G * 0.6917385 + B * 0.0792869
+        let Z = R * 0.0000000 + G * 0.0451134 + B * 1.0439443
+
+        return [X, Y, Z]
+    }
+
+    static func gammaCorrection(channel: Double) -> Double {
+        return (channel > 0.04045) ? pow((channel + 0.055) / 1.055, 2.4) : (channel / 12.92)
+    }
+
+    static func XYZtoLab(X: Double, Y: Double, Z: Double) -> [Double] {
+        // Normalize for D65 white point
+        var X = X / 0.95047
+        var Y = Y / 1.00000
+        var Z = Z / 1.08883
+
+        X = labF(t: X)
+        Y = labF(t: Y)
+        Z = labF(t: Z)
+
+        let L = (116 * Y) - 16
+        let a = 500 * (X - Y)
+        let b = 200 * (Y - Z)
+
+        return [L, a, b]
+    }
+
+    static func labF(t: Double) -> Double {
+        return (t > pow(6.0 / 29.0, 3)) ? cbrt(t) : (t / (3 * pow(6.0 / 29.0, 2)) + 4.0 / 29.0)
+    }
+
+    
+    static func cieXYZtoSRGB(X: Double, Y: Double, Z: Double) -> [Int] {
+        // Normalize XYZ values
+        let X = X / 1.0
+        let Y = Y / 1.0
+        let Z = Z / 1.0
+
+        // Linear transformation from XYZ to RGB
+        var R = X *  3.2406 + Y * -1.5372 + Z * -0.4986
+        var G = X * -0.9689 + Y *  1.8758 + Z *  0.0415
+        var B = X *  0.0557 + Y * -0.2040 + Z *  1.0570
+
+        // Compensate for out-of-range RGB values
+        R = (R > 0.0031308) ? (1.055 * pow(R, 1 / 2.4) - 0.055) : (12.92 * R)
+        G = (G > 0.0031308) ? (1.055 * pow(G, 1 / 2.4) - 0.055) : (12.92 * G)
+        B = (B > 0.0031308) ? (1.055 * pow(B, 1 / 2.4) - 0.055) : (12.92 * B)
+
+        // Clamp RGB values to [0, 1] range
+        R = max(0, min(1, R))
+        G = max(0, min(1, G))
+        B = max(0, min(1, B))
+
+        // Scale to 8-bit sRGB values
+        let sR = Int(round(R * 255))
+        let sG = Int(round(G * 255))
+        let sB = Int(round(B * 255))
+
+        // Return sRGB color array
+        return [sR, sG, sB]
+    }
+    
+    
+    
+    func lab2xyz(_ v: String, l: Double, a: Double, b: Double) -> Double {
+        var result: Double = 0.0
+        let lPlus16Div116 = (l + 16) / 116.0
+
+        switch v {
+        case "x":
+            if (lPlus16Div116 + a / 500.0) > 0.206893 {
+                result = 96.422 * pow((lPlus16Div116 + a / 500.0), 3)
+            } else {
+                result = 96.422 / 7.787 * ((lPlus16Div116 + l / 500.0) - 16 / 116.0)
+            }
+
+        case "y":
+            if lPlus16Div116 > 0.206893 {
+                result = 100 * pow(lPlus16Div116, 3)
+            } else {
+                result = 100 / 7.787 * (lPlus16Div116 - 16 / 116.0)
+            }
+
+        case "z":
+            if (lPlus16Div116 - b / 200.0) > 0.206893 {
+                result = 82.521 * pow((lPlus16Div116 - b / 200.0), 3)
+            } else {
+                result = 82.521 / 7.787 * ((lPlus16Div116 - b / 200.0) - 16 / 116.0)
+            }
+
+        default:
+            fatalError("Invalid value for v: \(v)")
+        }
+
+        return result
+    }
+    
+    // Helper functions
+    
+
+    private static func getLd(_ cDayi: Double) -> Int {
+        // Logic for getting Ld from cDayi
+        if (cDayi > 53 && cDayi < 59)   { return 60 }
+        if (cDayi > 59 && cDayi < 65)  { return 65 }
+        if cDayi > 65 && cDayi < 71 { return 70 }
+        if cDayi > 71 && cDayi < 77 { return 75 }
+        if cDayi > 77 && cDayi < 83 { return 80 }
+        if cDayi > 83 && cDayi < 89 { return 85 }
+        if cDayi > 89 && cDayi < 101 { return 93 }
+        if cDayi > 101 && cDayi < 107 { return 92 }
+        if cDayi > 107 && cDayi < 113 { return 90 }
+        if cDayi > 113 && cDayi < 119 { return 88 }
+        if cDayi > 119 && cDayi < 125 { return 85 }
+        if cDayi > 125 && cDayi < 131 { return 83 }
+        if cDayi > 131 && cDayi < 137 { return 80 }
+        if cDayi > 137 && cDayi < 143 { return 78 }
+        if cDayi > 143 && cDayi < 149 { return 75 }
+        if cDayi > 149 && cDayi < 155 { return 70 }
+        if cDayi > 155 && cDayi < 161 { return 68 }
+        if cDayi > 161 && cDayi < 167 { return 65 }
+        if cDayi > 167 && cDayi < 173 { return 63 }
+        if cDayi > 173 && cDayi < 179 { return 60 }
+        if cDayi > 179 && cDayi < 185  { return 58 }
+        if cDayi > 185 { return 55 }
+        // Additional conditions...
+        return 55
+    }
+    
+    
+}
+
+
 
 class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
@@ -790,8 +1076,9 @@ class ViewController: UIViewController, UIPageViewControllerDataSource, UIPageVi
         // Initialize the two view controllers (first and second page)
         let firstPageVC = CieClockViewController() // Your existing clock page
         let secondPageVC = SecondPageViewController() // The brick layout page
+        let thirdPageVC = DOYPageViewController() // The day of Year layout page
 
-        pageViews = [firstPageVC, secondPageVC]
+        pageViews = [firstPageVC, secondPageVC, thirdPageVC]
         
         // Create PageViewController
         pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
