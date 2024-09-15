@@ -16,9 +16,6 @@
 		B6C086152C8FCF6100F9826F /* cieClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C086142C8FCF6100F9826F /* cieClockTests.swift */; };
 		B6C0861F2C8FCF6100F9826F /* cieClockUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C0861E2C8FCF6100F9826F /* cieClockUITests.swift */; };
 		B6C086212C8FCF6100F9826F /* cieClockUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C086202C8FCF6100F9826F /* cieClockUITestsLaunchTests.swift */; };
-		B6C0862E2C8FF4CF00F9826F /* clockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C0862D2C8FF4CF00F9826F /* clockView.swift */; };
-		B6C086302C8FF9C800F9826F /* TimeColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C0862F2C8FF9C800F9826F /* TimeColor.swift */; };
-		B6C086322C90431400F9826F /* colorTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C086312C90431400F9826F /* colorTool.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,9 +49,6 @@
 		B6C0861A2C8FCF6100F9826F /* cieClockUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cieClockUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6C0861E2C8FCF6100F9826F /* cieClockUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cieClockUITests.swift; sourceTree = "<group>"; };
 		B6C086202C8FCF6100F9826F /* cieClockUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cieClockUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		B6C0862D2C8FF4CF00F9826F /* clockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = clockView.swift; sourceTree = "<group>"; };
-		B6C0862F2C8FF9C800F9826F /* TimeColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeColor.swift; sourceTree = "<group>"; };
-		B6C086312C90431400F9826F /* colorTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = colorTool.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,9 +106,6 @@
 				B6C086062C8FCF6100F9826F /* Assets.xcassets */,
 				B6C086082C8FCF6100F9826F /* LaunchScreen.storyboard */,
 				B6C0860B2C8FCF6100F9826F /* Info.plist */,
-				B6C0862D2C8FF4CF00F9826F /* clockView.swift */,
-				B6C0862F2C8FF9C800F9826F /* TimeColor.swift */,
-				B6C086312C90431400F9826F /* colorTool.swift */,
 			);
 			path = cieClock;
 			sourceTree = "<group>";
@@ -267,12 +258,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6C086302C8FF9C800F9826F /* TimeColor.swift in Sources */,
 				B6C086022C8FCF5F00F9826F /* ViewController.swift in Sources */,
-				B6C0862E2C8FF4CF00F9826F /* clockView.swift in Sources */,
 				B6C085FE2C8FCF5F00F9826F /* AppDelegate.swift in Sources */,
 				B6C086002C8FCF5F00F9826F /* SceneDelegate.swift in Sources */,
-				B6C086322C90431400F9826F /* colorTool.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,7 +368,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -437,7 +425,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -453,26 +441,32 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = GH38Q4C3SV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = cieClock/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = cieClock;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = PBN.cieClock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -482,26 +476,32 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = GH38Q4C3SV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = cieClock/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = cieClock;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = PBN.cieClock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

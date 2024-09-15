@@ -331,7 +331,7 @@ class CieClockViewController: UIViewController {
 
     private static func getLs(_ cseci: Double) -> Int {
         // Logic for getting Ls from cseci
-        debugPrint("cseci: ",cseci)
+        //debugPrint("cseci: ",cseci)
         if (cseci > 53 && cseci < 59)   { return 60 }
         if (cseci > 59 && cseci < 65)  { return 65 }
         if cseci > 65 && cseci < 71 { return 70 }
@@ -748,7 +748,7 @@ class SecondPageViewController: UIViewController {
 
     private static func getLs(_ cseci: Double) -> Int {
         // Logic for getting Ls from cseci
-        debugPrint("cseci: ",cseci)
+        //debugPrint("cseci: ",cseci)
         if (cseci > 53 && cseci < 59)   { return 60 }
         if (cseci > 59 && cseci < 65)  { return 65 }
         if cseci > 65 && cseci < 71 { return 70 }
@@ -858,12 +858,7 @@ class DOYPageViewController: UIViewController {
         let rectHeight: CGFloat = 400
         
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.hour, .minute, .second], from: Date())
-        
-        var cHour = components.hour ?? 0
-        let cMin = components.minute ?? 0
-        let cSec = components.second ?? 0
-        
+    
         
         let cDay = calendar.ordinality(of: .day, in: .year, for: Date()) ?? 1
         let cDayi = (Double(cDay) / 365.0) * 360.0
